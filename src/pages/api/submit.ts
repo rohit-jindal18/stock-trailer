@@ -21,6 +21,7 @@ export default withSession(async (req: any, res: NextApiResponse) => {
     }
     try {
         const instrumentListString = fs.readFileSync('instruments.json', { encoding: 'utf-8' });
+        console.log("instrument", instrumentListString);
         const instrumentsList = JSON.parse(instrumentListString);
         const instrumentsMap = instrumentsList.reduce((map: any, instrument: Instrument, index: number) => ({
             ...map,
@@ -43,6 +44,7 @@ export default withSession(async (req: any, res: NextApiResponse) => {
         // then redirect
         res.send(200);
     } catch (error: any) {
+        console.log("error", JSON.stringify(error));
         const { response: fetchResponse } = error
         res.status(fetchResponse?.status || 500).json(error.data)
     }
