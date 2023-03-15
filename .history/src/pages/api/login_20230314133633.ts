@@ -1,5 +1,0 @@
-
-const kc = new KiteConnect({
-
-})
-
