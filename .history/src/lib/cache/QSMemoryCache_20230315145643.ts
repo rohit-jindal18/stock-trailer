@@ -1,0 +1,19 @@
+import { MemoryCache } from 'memory-cache-node';
+import EventEmitter from '../eventEmitter/EventEmitter';
+import BaseMemoryCache from './BaseMemoryCache';
+import { EVENT_TYPE } from '../eventEmitter/constants';
+
+const QS_INSTRUMENTS_KEY = 'qs_instruments';
+
+class QSMemoryCache extends BaseMemoryCache {
+    storeQSInstruments(value: any) {
+        EventEmitter.emit(EVENT_TYPE.QS_UPDATE, value)
+        this.storeItemsInCache(QS_INSTRUMENTS_KEY, value);
+    }
+
+    getQSInstruments() {
+        return this.getItemsFromCache(QS_INSTRUMENTS_KEY);
+    }
+}
+
+export default new QSMemoryCache();
