@@ -1,12 +1,9 @@
-// @ts-nocheck
-import qsMemoryCache from "@stock-trailer/lib/cache/QSMemoryCache";
-import { Exchange, Instrument } from "@stock-trailer/lib/models";
+import { INSTRUMENTS_MAP } from "@stock-trailer/constants";
 import withSession from "@stock-trailer/lib/session";
+import fs from 'fs';
 // @ts-ignore
 import { KiteConnect } from 'kiteconnect';
 import { NextApiResponse } from "next";
-import fs from 'fs';
-import { INSTRUMENTS } from "@stock-trailer/constants";
 
 
 const kc = new KiteConnect({
@@ -23,18 +20,23 @@ export default withSession(async (req: any, res: NextApiResponse) => {
         return res.status(400).send('Instruments not present');
     }
     try {
-        const instrumentsMap = (INSTRUMENTS || []).reduce((map: any, instrument: Instrument, index: number) => ({
-            ...map,
-            [instrument.tradingsymbol]: instrument
-        }), {});
+        // const instrumentsMap = (INSTRUMENTS_MAP || []).reduce((map: any, instrument: Instrument, index: number) => ({
+        //     ...map,
+        //     [instrument.tradingsymbol]: {
+        //         instrument_token: instrument.instrument_token,
+        //         exchange_token: instrument.exchange_token,
+        //         tradingsymbol: instrument.tradingsymbol,
+        //     }
+        // }), {});
+        // console.log("map", JSON.stringify(instrumentsMap));
         const validInstrumentList = instruments.map(i => {
-            if (instrumentsMap[i.id]) {
+            if (INSTRUMENTS_MAP[i.id]) {
                 return {
                     ...i,
-                    ...instrumentsMap[i.id],
-                    instrumentId: instrumentsMap[i.id].instrument_token,
+                    ...INSTRUMENTS_MAP[i.id],
+                    instrumentId: INSTRUMENTS_MAP[i.id].instrument_token,
                     quantity: i.qty,
-                    tradingSymbol: instrumentsMap[i.id].tradingsymbol,
+                    tradingSymbol: INSTRUMENTS_MAP[i.id].tradingsymbol,
                 }
             }
             return null;
