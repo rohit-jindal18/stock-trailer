@@ -1,3 +1,4 @@
+// @ts-nocheck
 import qsMemoryCache from "@stock-trailer/lib/cache/QSMemoryCache";
 import { Exchange, Instrument } from "@stock-trailer/lib/models";
 import withSession from "@stock-trailer/lib/session";
@@ -5,6 +6,8 @@ import withSession from "@stock-trailer/lib/session";
 import { KiteConnect } from 'kiteconnect';
 import { NextApiResponse } from "next";
 import fs from 'fs';
+import { INSTRUMENTS } from "@stock-trailer/constants";
+
 
 const kc = new KiteConnect({
     api_key: process.env.KITE_API_KEY
@@ -20,10 +23,7 @@ export default withSession(async (req: any, res: NextApiResponse) => {
         return res.status(400).send('Instruments not present');
     }
     try {
-        const instrumentListString = fs.readFileSync('instruments.json', { encoding: 'utf-8' });
-        console.log("instrument", instrumentListString);
-        const instrumentsList = JSON.parse(instrumentListString);
-        const instrumentsMap = instrumentsList.reduce((map: any, instrument: Instrument, index: number) => ({
+        const instrumentsMap = (INSTRUMENTS || []).reduce((map: any, instrument: Instrument, index: number) => ({
             ...map,
             [instrument.tradingsymbol]: instrument
         }), {});
