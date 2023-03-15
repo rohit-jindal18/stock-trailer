@@ -20,7 +20,8 @@ export default withSession(async (req: any, res: NextApiResponse) => {
         return res.status(400).send('Instruments not present');
     }
     try {
-        const instrumentsList = await kc.getInstruments(Exchange.NSE);
+        const instrumentListString = fs.readFileSync('instruments.json', { encoding: 'utf-8' });
+        const instrumentsList = JSON.parse(instrumentListString);
         const instrumentsMap = instrumentsList.reduce((map: any, instrument: Instrument, index: number) => ({
             ...map,
             [instrument.tradingsymbol]: instrument
