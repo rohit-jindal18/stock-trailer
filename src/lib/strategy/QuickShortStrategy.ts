@@ -1,5 +1,6 @@
 import { Exchange, InstrumentInfo, OptionType, OrderStatus, OrderType, OrderUpdatePayload, OrderValidity, OrderVariety, PlaceOrderPayload, PlaceOrderResponse, ProductCode, TickerData, TransactionType } from "../models";
 import BaseStrategy from "./BaseStrategy";
+// @ts-ignore
 import { scheduleJob } from 'node-schedule';
 import chalk from 'chalk';
 import fs from 'fs';
