@@ -41,7 +41,7 @@ export default withSession(async (req: any, res: NextApiResponse) => {
             }
             return null;
         }).filter(e => e);
-        fs.writeFileSync('qsInstruments.txt', JSON.stringify(validInstrumentList));
+        fs.writeFileSync('/tmp/qsInstruments.txt', JSON.stringify(validInstrumentList));
         // qsMemoryCache.storeQSInstruments(validInstrumentList);
         // then redirect
         res.send(200);

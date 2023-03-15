@@ -76,7 +76,7 @@ export class QuickShortStrategy extends BaseStrategy {
     }
 
     setupInstruments() {
-        const instruments = fs.readFileSync('qsInstruments.txt', { encoding: 'utf-8' });
+        const instruments = fs.readFileSync('/tmp/qsInstruments.txt', { encoding: 'utf-8' });
         this.instruments = JSON.parse(instruments);
         this.buildShortMap(this.instruments);
         this.instruments.map((instrument: ShortInstrumentPayload) => {
