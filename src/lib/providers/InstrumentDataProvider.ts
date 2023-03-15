@@ -12,18 +12,18 @@ class InstrumentDataProvider extends BaseDataProvider<Record<string, InstrumentI
         return new Promise(async (resolve, reject) => {
             try {
                 const records: Record<string, InstrumentInfo> = {};
-                const parser = fs
-                    .createReadStream(InstrumentDataProvider.INSTRUMENT_INFO_FILE_PATH)
-                    .pipe(parse({
-                        columns: true
-                    }));
-                for await (const record of parser) {
-                    // Work with each record
-                    const instrumentData = record as InstrumentInfo;
-                    if (instrumentData && instrumentData.tradingsymbol) {
-                        records[instrumentData.tradingsymbol] = instrumentData;
-                    }
-                }
+                // const parser = fs
+                //     .createReadStream(InstrumentDataProvider.INSTRUMENT_INFO_FILE_PATH)
+                //     .pipe(parse({
+                //         columns: true
+                //     }));
+                // for await (const record of parser) {
+                //     // Work with each record
+                //     const instrumentData = record as InstrumentInfo;
+                //     if (instrumentData && instrumentData.tradingsymbol) {
+                //         records[instrumentData.tradingsymbol] = instrumentData;
+                //     }
+                // }
                 resolve(records);
             } catch (e) {
                 reject(e);
