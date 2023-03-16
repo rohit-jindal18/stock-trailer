@@ -39,6 +39,7 @@ export class StrategyManager extends BaseManager implements IStrategyDelegate {
             const strategyIds = StrategyManager.subscriptionToStrategyIdMap[+instrument_token];
             if (strategyIds) {
                 for (let strategyId of strategyIds) {
+                    console.log("ticker update");
                     StrategyManager.strategyMap[strategyId]?.onTickerUpdate(tick);
                 }
             }

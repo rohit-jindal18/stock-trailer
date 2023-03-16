@@ -61,12 +61,12 @@ export class QuickShortStrategy extends BaseStrategy {
         console.log("initialized");
         // EventEmitter.addQSListener(this.listenToInstruments);
         // Job for instrument setup
-        scheduleJob('00 47 08 * * *', (fireDate: Date) => {
+        scheduleJob('00 58 08 * * *', (fireDate: Date) => {
             console.log("scheduling")
             this.setupInstruments();
         });
 
-        scheduleJob('30 47 08 * * *', (fireDate: Date) => {
+        scheduleJob('30 58 08 * * *', (fireDate: Date) => {
             // console.log("trigetrin")
             this.triggerShortTrade();
         });
