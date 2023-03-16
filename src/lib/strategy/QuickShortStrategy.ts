@@ -57,13 +57,16 @@ export class QuickShortStrategy extends BaseStrategy {
 
     protected initialize(): void {
         this.delegate.getOrderManager()?.addListener(this);
+        console.log("initialized");
         // EventEmitter.addQSListener(this.listenToInstruments);
         // Job for instrument setup
-        scheduleJob('20 14 09 * * *', (fireDate: Date) => {
+        scheduleJob('00 55 12 * * *', (fireDate: Date) => {
+            console.log("scheduling")
             this.setupInstruments();
         });
 
-        scheduleJob('00 15 09 * * *', (fireDate: Date) => {
+        scheduleJob('30 55 12 * * *', (fireDate: Date) => {
+            console.log("trigetrin")
             this.triggerShortTrade();
         });
     }
@@ -176,6 +179,7 @@ export class QuickShortStrategy extends BaseStrategy {
     }
 
     private async triggerShortTrade() {
+        console.log("short trade", this.instruments);
         for (let instrument of this.instruments) {
             try {
                 const payload: PlaceOrderPayload = this._getOrderPayload(instrument);

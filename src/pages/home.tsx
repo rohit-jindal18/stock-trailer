@@ -3,7 +3,8 @@ import styles from '@stock-trailer/styles/Home.module.css'
 import { IInstrumentInfo } from '@stock-trailer/types'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
-import { useState } from 'react'
+import Router, { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -11,6 +12,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Authorize() {
+  const router = useRouter();
   const [submitProgress, setSubmitProgress] = useState(false);
   const [instruments, setInstruments] = useState<IInstrumentInfo[]>([{
     id: '',
@@ -41,6 +43,11 @@ export default function Authorize() {
       })
   }
   const { data, error, isLoading } = useSWR('/api/user', fetcher);
+  useEffect(() => {
+    if (data && !data?.isLoggedIn) {
+      router.push('/');
+    }
+  }, [data, isLoading]);
   return (
     <>
       <Head>
