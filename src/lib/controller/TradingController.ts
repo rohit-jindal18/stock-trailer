@@ -67,14 +67,14 @@ export class TradingController implements ITradeDelegate, ITickerListener {
                 this
                     .accessToken = this.userInfo?.session?.access_token;
             } else {
-                console.log('Could not store access token for user');
+                // console.log('Could not store access token for user');
                 return Promise.reject();
             }
             const instrumentData = await InstrumentDataProvider.getData();
             if (instrumentData) {
                 this.instrumentData = instrumentData;
             } else {
-                console.log('Instrument Data is Empty');
+                // console.log('Instrument Data is Empty');
                 return Promise.reject();
             }
         } catch (e) {
@@ -140,23 +140,23 @@ export class TradingController implements ITradeDelegate, ITickerListener {
     }
 
     onConnected(): void {
-        console.log("onConnected");
+        // console.log("onConnected");
     }
 
     onDisConnected(): void {
-        console.log("onDisConnected");
+        // console.log("onDisConnected");
     }
 
     onError(error: any): void {
-        console.log("onError", error);
+        // console.log("onError", error);
     }
 
     onClose(): void {
-        console.log("onClose");
+        // console.log("onClose");
     }
 
     onReConnect(): void {
-        console.log("onReConnect");
+        // console.log("onReConnect");
     }
 
     onOrderUpdate = (orderUpdatePayload: OrderUpdatePayload): void => {
@@ -165,7 +165,7 @@ export class TradingController implements ITradeDelegate, ITickerListener {
     }
 
     onTickerUpdate = (tickerData: TickerData[]): void => {
-        console.log("onTickerUpdate");
+        // console.log("onTickerUpdate");
         this.strategyManager?.onTickerUpdate(tickerData);
     }
 }

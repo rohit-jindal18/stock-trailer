@@ -18,7 +18,7 @@ class AppEventEmitter {
     static emitQSListener = (data?: any) => {
 
         (this.qsListeners).forEach(listener => {
-            console.log("listne", listener)
+            // console.log("listne", listener)
             listener(data);
         })
         // const listenerCount2 = eventEmitter.listenerCount(eventKey);

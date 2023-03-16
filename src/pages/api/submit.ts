@@ -46,7 +46,7 @@ export default withSession(async (req: any, res: NextApiResponse) => {
         // then redirect
         res.send(200);
     } catch (error: any) {
-        console.log("error", JSON.stringify(error));
+        // console.log("error", JSON.stringify(error));
         const { response: fetchResponse } = error
         res.status(fetchResponse?.status || 500).json(error.data)
     }

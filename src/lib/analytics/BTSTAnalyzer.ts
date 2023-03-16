@@ -8,7 +8,7 @@ interface InstrumentMod extends Instrument {
 }
 
 export default class BTSTAnalyzer extends BaseAnalyzer {
-    
+
     private static readonly blackListedSymbolSuffix: Set<string> = new Set(['SG', 'GS', 'TB', 'N6'
         , 'NW', 'GB', 'SM', 'BZ', 'NC'
         , 'NAV', 'IT', 'BE', 'P1', 'W1', 'E1', 'IV', 'X1'
@@ -33,7 +33,6 @@ export default class BTSTAnalyzer extends BaseAnalyzer {
                 }
             }
         } catch (e) {
-            console.log('Raghav ERROR :: ', JSON.stringify(e));
             return Promise.resolve(quotes);
         }
         return Promise.resolve(quotes);
@@ -41,10 +40,8 @@ export default class BTSTAnalyzer extends BaseAnalyzer {
 
     private async _processInstruments() {
         try {
-            console.log('Raghav ::  Fetch EQ NSE Instruments')
             // 1. Fetch EQ NSE Instruments
             let instruments: Instrument[] = await this.tradeDelegate.getInstruments(Exchange.NSE);
-            console.log('Raghav ::  Filter out unwanted tradingSymbols and segments')
             // 2. Filter out unwanted tradingSymbols and segments
             instruments = instruments.filter((instrument: Instrument) => {
                 const tokens = instrument.tradingsymbol && instrument.tradingsymbol.split('-');
@@ -57,7 +54,7 @@ export default class BTSTAnalyzer extends BaseAnalyzer {
                     && instrument.segment === 'NSE'
                     && (!suffix || !BTSTAnalyzer.blackListedSymbolSuffix.has(suffix));
             });
-            console.log('Raghav ::  Contsruct keys for fetching quotes', instruments.length);
+            // console.log('Raghav ::  Contsruct keys for fetching quotes', instruments.length);
             // 3. Contsruct keys for fetching quotes
             const instrumentDataMap: Record<number, string> = {};
             const instrumentTokens: string[] = instruments.map((instrument: Instrument, index: number) => {
@@ -65,11 +62,11 @@ export default class BTSTAnalyzer extends BaseAnalyzer {
                 instrumentDataMap[index] = tsKey;
                 return tsKey;
             });
-            console.log('Raghav ::  Fetch Quotes for instruments')
+            // console.log('Raghav ::  Fetch Quotes for instruments')
             // 4. Fetch Quotes for instruments
             // const quotes: Record<string, Quote> = await this.tradeDelegate.getQuotes(instrumentTokens);
             const quotes: Record<string, Quote> = await this._getQuotes(instrumentTokens);
-            console.log('Raghav ::  Unify data at one place for sorting')
+            // console.log('Raghav ::  Unify data at one place for sorting')
             // 5. Unify data at one place for sorting
             let instrumentsWithQuotes: InstrumentMod[] = instruments.map((instrument: Instrument, index: number) => {
                 const quote = quotes[instrumentDataMap[index]];
@@ -82,11 +79,11 @@ export default class BTSTAnalyzer extends BaseAnalyzer {
             });
 
             instrumentsWithQuotes = instrumentsWithQuotes.filter((i: InstrumentMod) => {
-                
+
                 return i.percentChange > 0;
             });
 
-            
+
 
             // 6. Sort instrument quotes based on the OHLC logic
             instrumentsWithQuotes.sort((a: InstrumentMod, b: InstrumentMod) => {
@@ -97,14 +94,14 @@ export default class BTSTAnalyzer extends BaseAnalyzer {
                 return { symbol: i.tradingsymbol, percent: i.percentChange };
             });
 
-            console.log('Raghav', JSON.stringify(temp));
+            // console.log('Raghav', JSON.stringify(temp));
 
             // console.log('Raghav', JSON.stringify(instrumentsWithQuotes.slice(0, 9)));
         } catch (e) {
-            console.log('Raghav', JSON.stringify(e));
+            // console.log('Raghav', JSON.stringify(e));
         }
     }
-    
+
 }
 
 /**

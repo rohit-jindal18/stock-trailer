@@ -17,7 +17,7 @@ class QSMemoryCache extends BaseMemoryCache {
     }
 
     printTag = (tag: string) => {
-        console.log('CACHE_TAG :: ', this.tag);
+        // console.log('CACHE_TAG :: ', this.tag);
     }
 
     getQSInstruments = () => {

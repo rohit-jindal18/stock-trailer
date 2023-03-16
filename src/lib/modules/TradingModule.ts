@@ -39,7 +39,7 @@ export class TradingConnectionWrapper {
     private onConnected = () => {
         this.isSocketConnected = true;
         this.tickerListener.onConnected();
-        console.log(this.instrumentSubscriptions);
+        // console.log(this.instrumentSubscriptions);
         this._subscribeInstruments();
     }
 

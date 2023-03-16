@@ -57,16 +57,16 @@ export class QuickShortStrategy extends BaseStrategy {
 
     protected initialize(): void {
         this.delegate.getOrderManager()?.addListener(this);
-        console.log("initialized");
+        // console.log("initialized");
         // EventEmitter.addQSListener(this.listenToInstruments);
         // Job for instrument setup
-        scheduleJob('00 40 07 * * *', (fireDate: Date) => {
-            console.log("scheduling")
+        scheduleJob('00 47 07 * * *', (fireDate: Date) => {
+            // console.log("scheduling")
             this.setupInstruments();
         });
 
-        scheduleJob('30 40 07 * * *', (fireDate: Date) => {
-            console.log("trigetrin")
+        scheduleJob('30 47 07 * * *', (fireDate: Date) => {
+            // console.log("trigetrin")
             this.triggerShortTrade();
         });
     }
@@ -80,7 +80,7 @@ export class QuickShortStrategy extends BaseStrategy {
 
     setupInstruments() {
         const instruments = fs.readFileSync('/tmp/qsInstruments.txt', { encoding: 'utf-8' });
-        console.log("instruments rad", JSON.stringify(instruments));
+        // console.log("instruments rad", JSON.stringify(instruments));
         this.instruments = JSON.parse(instruments);
         this.buildShortMap(this.instruments);
         this.instruments.map((instrument: ShortInstrumentPayload) => {
@@ -161,14 +161,14 @@ export class QuickShortStrategy extends BaseStrategy {
             , triggerPrice);
         try {
             const placeOrderResponse: PlaceOrderResponse = await this.delegate.placeOrder(orderPayload);
-            console.log('SLM Trade ' + shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgGreen.bold(placeOrderResponse.order_id));
+            // console.log('SLM Trade ' + shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgGreen.bold(placeOrderResponse.order_id));
             // console.log('SLM Trade ' + shortInstrumentData.tradingSymbol + ' :: SUCCESS :: ', placeOrderResponse.order_id);
             QuickShortStrategy.slmOrders.add(shortInstrumentData.instrumentId);
             this.delegate.getOrderManager()?.syncOrders();
         } catch (e) {
-            console.log('SLM Trade ' + shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgRed.bold('ERROR'));
+            // console.log('SLM Trade ' + shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgRed.bold('ERROR'));
             // console.log('SLM Trade ' + shortInstrumentData.tradingSymbol + ' :: ', 'ERROR');
-            console.log(JSON.stringify(e));
+            // console.log(JSON.stringify(e));
         }
         return Promise.resolve();
     }
@@ -180,7 +180,7 @@ export class QuickShortStrategy extends BaseStrategy {
     }
 
     private async triggerShortTrade() {
-        console.log("short trade", this.instruments);
+        // console.log("short trade", this.instruments);
         for (let instrument of this.instruments) {
             try {
                 const payload: PlaceOrderPayload = this._getOrderPayload(instrument);
@@ -188,14 +188,14 @@ export class QuickShortStrategy extends BaseStrategy {
 
 
                 this.delegate.placeOrder(payload).then((placeOrderResponse: PlaceOrderResponse) => {
-                    console.log('First Trade ' + instrument.tradingSymbol + ' :: ', chalk.white.bgGreen.bold(placeOrderResponse.order_id));
+                    // console.log('First Trade ' + instrument.tradingSymbol + ' :: ', chalk.white.bgGreen.bold(placeOrderResponse.order_id));
                     // console.log('First Trade ' + instrument.tradingSymbol + ' :: SUCCESS :: ', placeOrderResponse.order_id);
                     QuickShortStrategy.initialOrders.add(placeOrderResponse.order_id);
                     this.delegate.getOrderManager()?.syncOrders();
                 }).catch((e) => {
-                    console.log('First Trade ' + instrument.tradingSymbol + ' :: ', chalk.white.bgRed.bold('ERROR'));
+                    // console.log('First Trade ' + instrument.tradingSymbol + ' :: ', chalk.white.bgRed.bold('ERROR'));
                     // console.log('First Trade ' + instrument.tradingSymbol + ' :: ', 'ERROR');
-                    console.log(JSON.stringify(e));
+                    // console.log(JSON.stringify(e));
                 })
             } catch (e) {
 
@@ -235,7 +235,7 @@ export class QuickShortStrategy extends BaseStrategy {
         const stoplossPercent = basePercentChange + initialStopLossPercent;
         // const stoplossPercent = openPercentChange + QuickShortStrategy.initialSoplossPrecent;
         let triggerPrice = basePrice + openPrice * (stoplossPercent / 100);
-        console.log('Raghav', openPrice, openPercentChange, stoplossPercent, triggerPrice);
+        // console.log('Raghav', openPrice, openPercentChange, stoplossPercent, triggerPrice);
         return this._getRoundedPrice(triggerPrice);
     }
 
@@ -253,16 +253,16 @@ export class QuickShortStrategy extends BaseStrategy {
             if (distance > 0) {
                 // const triggerPricePercent = positionPercent ? 
                 if (percentageChange >= 2) {
-                    console.log(shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgYellow.bold('Trail stoploss'));
+                    // console.log(shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgYellow.bold('Trail stoploss'));
                 } else if (percentageChange >= 1.5) {
                     // If profit goes above 1% modify SL at the initial position taken
-                    console.log(shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgYellow.bold('Initial position SL'));
+                    // console.log(shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgYellow.bold('Initial position SL'));
                 }
                 // in profit, as last_price is less than the sell value
-                console.log(shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgGreen.bold(percentageChange));
+                // console.log(shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgGreen.bold(percentageChange));
                 // console.log(shortInstrumentData.tradingSymbol + ' :: PROFIT :: ', percentageChange);
             } else {
-                console.log(shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgRed.bold(percentageChange));
+                // console.log(shortInstrumentData.tradingSymbol + ' :: ', chalk.white.bgRed.bold(percentageChange));
                 // console.log(shortInstrumentData.tradingSymbol + ' :: LOSS', percentageChange);
             }
         }
