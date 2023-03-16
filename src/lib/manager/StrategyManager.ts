@@ -25,7 +25,7 @@ export class StrategyManager extends BaseManager implements IStrategyDelegate {
     private currentNiftyValue = -1;
 
     protected initialize(): void {
-        this.tradeDelegate.subscribeToInstrument(NIFTY_INDEX_TOKEN);
+        // this.tradeDelegate.subscribeToInstrument(NIFTY_INDEX_TOKEN);
         const quickShortStrategy = new QuickShortStrategy(this);
         StrategyManager.strategyMap[quickShortStrategy.getStrategyId()] = quickShortStrategy;
     }

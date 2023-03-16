@@ -8,6 +8,7 @@ import console from "console";
 import QSMemoryCache from "../cache/QSMemoryCache";
 import EventEmitter from "../eventEmitter/EventEmitter";
 import { EVENT_TYPE } from "../eventEmitter/constants";
+import { NIFTY_INDEX_TOKEN } from "../utils/constants";
 
 interface ShortInstrumentPayload {
     instrumentId: number;
@@ -57,15 +58,15 @@ export class QuickShortStrategy extends BaseStrategy {
 
     protected initialize(): void {
         this.delegate.getOrderManager()?.addListener(this);
-        // console.log("initialized");
+        console.log("initialized");
         // EventEmitter.addQSListener(this.listenToInstruments);
         // Job for instrument setup
-        scheduleJob('00 55 07 * * *', (fireDate: Date) => {
-            // console.log("scheduling")
+        scheduleJob('00 37 08 * * *', (fireDate: Date) => {
+            console.log("scheduling")
             this.setupInstruments();
         });
 
-        scheduleJob('30 55 07 * * *', (fireDate: Date) => {
+        scheduleJob('30 37 08 * * *', (fireDate: Date) => {
             // console.log("trigetrin")
             this.triggerShortTrade();
         });
@@ -80,7 +81,7 @@ export class QuickShortStrategy extends BaseStrategy {
 
     setupInstruments() {
         const instruments = fs.readFileSync('/tmp/qsInstruments.txt', { encoding: 'utf-8' });
-        // console.log("instruments rad", JSON.stringify(instruments));
+        console.log("instruments rad", JSON.stringify(instruments));
         this.instruments = JSON.parse(instruments);
         this.buildShortMap(this.instruments);
         this.instruments.map((instrument: ShortInstrumentPayload) => {

@@ -34,7 +34,7 @@ export default withSession(async (req: any, res: NextApiResponse) => {
                 return {
                     ...i,
                     ...INSTRUMENTS_MAP[i.id],
-                    instrumentId: INSTRUMENTS_MAP[i.id].instrument_token,
+                    instrumentId: +INSTRUMENTS_MAP[i.id].instrument_token,
                     quantity: i.qty,
                     tradingSymbol: INSTRUMENTS_MAP[i.id].tradingsymbol,
                 }

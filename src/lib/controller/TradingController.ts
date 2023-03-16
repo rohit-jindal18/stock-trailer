@@ -140,7 +140,7 @@ export class TradingController implements ITradeDelegate, ITickerListener {
     }
 
     onConnected(): void {
-        // console.log("onConnected");
+        console.log("onConnected");
     }
 
     onDisConnected(): void {
@@ -161,7 +161,7 @@ export class TradingController implements ITradeDelegate, ITickerListener {
 
     onOrderUpdate = (orderUpdatePayload: OrderUpdatePayload): void => {
         this.orderManager?.updateOrder(orderUpdatePayload);
-        console.log("onOrderUpdate", orderUpdatePayload);
+        // console.log("onOrderUpdate", orderUpdatePayload);
     }
 
     onTickerUpdate = (tickerData: TickerData[]): void => {
