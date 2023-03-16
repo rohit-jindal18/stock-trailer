@@ -60,12 +60,12 @@ export class QuickShortStrategy extends BaseStrategy {
         console.log("initialized");
         // EventEmitter.addQSListener(this.listenToInstruments);
         // Job for instrument setup
-        scheduleJob('00 31 07 * * *', (fireDate: Date) => {
+        scheduleJob('00 05 13 * * *', (fireDate: Date) => {
             console.log("scheduling")
             this.setupInstruments();
         });
 
-        scheduleJob('30 31 07 * * *', (fireDate: Date) => {
+        scheduleJob('30 05 13 * * *', (fireDate: Date) => {
             console.log("trigetrin")
             this.triggerShortTrade();
         });
@@ -80,6 +80,7 @@ export class QuickShortStrategy extends BaseStrategy {
 
     setupInstruments() {
         const instruments = fs.readFileSync('/tmp/qsInstruments.txt', { encoding: 'utf-8' });
+        console.log("instruments rad", JSON.stringify(instruments));
         this.instruments = JSON.parse(instruments);
         this.buildShortMap(this.instruments);
         this.instruments.map((instrument: ShortInstrumentPayload) => {
