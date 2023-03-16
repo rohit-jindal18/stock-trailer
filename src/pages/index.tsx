@@ -5,10 +5,21 @@ import styles from '@stock-trailer/styles/Home.module.css'
 import { Button } from '@chakra-ui/react'
 import { KITE_LOGIN } from '@stock-trailer/constants'
 import Link from 'next/link'
+import useSWR from 'swr'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 const inter = Inter({ subsets: ['latin'] })
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Home() {
+  const router = useRouter();
+  const { data, error, isLoading } = useSWR('/api/user', fetcher);
+  useEffect(() => {
+    if (data && data?.isLoggedIn) {
+      router.push('/home');
+    }
+  }, [data, isLoading]);
   return (
     <>
       <Head>

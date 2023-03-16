@@ -62,9 +62,8 @@ export default function Authorize() {
           {
             instruments.map((instrument, index) => {
               return (
-                <Box marginY={'16px'} display={'flex'} alignItems='center' key={`qs-${index}`} >
-                  <Text mr={'16px'}>{index + 1}.</Text>
-                  <InputGroup>
+                <Box marginY={'16px'} display={'flex'} flexWrap='wrap' alignItems='center' key={`qs-${index}`} >
+                  <InputGroup marginY={'8px'} width={'300px'}>
                     <InputLeftAddon children='Instrument ID' />
                     <Input placeholder='Enter' title='Instrument Id' display={'Instrument Id'} value={instrument.id} onChange={(event) => {
                       const newInstruments = [
@@ -74,7 +73,7 @@ export default function Authorize() {
                       setInstruments(newInstruments);
                     }} />
                   </InputGroup>
-                  <InputGroup>
+                  <InputGroup marginY={'8px'} width={'300px'}>
                     <InputLeftAddon children='Quantity' />
                     <Input placeholder='Enter' value={instrument.qty} onChange={(event) => {
                       const newInstruments = [
@@ -84,9 +83,6 @@ export default function Authorize() {
                       setInstruments(newInstruments);
                     }} />
                   </InputGroup>
-                  <Button variant={'solid'} width='148px' ml={'16px'} onClick={() => {
-                    setInstruments(instruments.filter((i, ind) => ind !== index));
-                  }}>Remove</Button>
                 </Box>
               );
             })
