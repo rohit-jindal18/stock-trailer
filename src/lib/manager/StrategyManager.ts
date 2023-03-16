@@ -33,10 +33,10 @@ export class StrategyManager extends BaseManager implements IStrategyDelegate {
     public onTickerUpdate(tickerData: TickerData[]): void {
         for (let tick of tickerData) {
             const { instrument_token } = tick;
-            if (instrument_token === NIFTY_INDEX_TOKEN) {
+            if (+instrument_token === NIFTY_INDEX_TOKEN) {
                 this._updateNiftyData(tick);
             }
-            const strategyIds = StrategyManager.subscriptionToStrategyIdMap[instrument_token];
+            const strategyIds = StrategyManager.subscriptionToStrategyIdMap[+instrument_token];
             if (strategyIds) {
                 for (let strategyId of strategyIds) {
                     StrategyManager.strategyMap[strategyId]?.onTickerUpdate(tick);

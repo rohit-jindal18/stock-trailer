@@ -61,12 +61,12 @@ export class QuickShortStrategy extends BaseStrategy {
         console.log("initialized");
         // EventEmitter.addQSListener(this.listenToInstruments);
         // Job for instrument setup
-        scheduleJob('00 37 08 * * *', (fireDate: Date) => {
+        scheduleJob('00 47 08 * * *', (fireDate: Date) => {
             console.log("scheduling")
             this.setupInstruments();
         });
 
-        scheduleJob('30 37 08 * * *', (fireDate: Date) => {
+        scheduleJob('30 47 08 * * *', (fireDate: Date) => {
             // console.log("trigetrin")
             this.triggerShortTrade();
         });
@@ -92,29 +92,30 @@ export class QuickShortStrategy extends BaseStrategy {
 
     onOrdersUpdated(orders: OrderUpdatePayload[]): void {
         orders.map((slmOrder: OrderUpdatePayload) => {
-            if (QuickShortStrategy.shortInstruments.has(slmOrder.instrument_token)) {
+            const instrument_token = +slmOrder.instrument_token;
+            if (QuickShortStrategy.shortInstruments.has(instrument_token)) {
                 if (QuickShortStrategy.initialOrders.has(slmOrder.order_id)
                     && slmOrder.order_type === OrderType.MARKET
                     && slmOrder.transaction_type === TransactionType.SELL
                     && slmOrder.status === OrderStatus.COMPLETE
-                    && !QuickShortStrategy.instrumentToShortOrderMapping[slmOrder.instrument_token]) {
+                    && !QuickShortStrategy.instrumentToShortOrderMapping[instrument_token]) {
                     // this is the slmOrder placed initially
-                    QuickShortStrategy.instrumentToShortOrderMapping[slmOrder.instrument_token] = slmOrder;
-                    if (QuickShortStrategy.instrumentToMetaMapping[slmOrder.instrument_token]) {
-                        const instrumentMeta: ShortInstrumentMeta = QuickShortStrategy.instrumentToMetaMapping[slmOrder.instrument_token];
+                    QuickShortStrategy.instrumentToShortOrderMapping[instrument_token] = slmOrder;
+                    if (QuickShortStrategy.instrumentToMetaMapping[instrument_token]) {
+                        const instrumentMeta: ShortInstrumentMeta = QuickShortStrategy.instrumentToMetaMapping[instrument_token];
                         const { previousClose } = instrumentMeta;
                         const newInstrumentMeta = { ...instrumentMeta };
                         newInstrumentMeta.positionPrice = slmOrder.average_price;
                         newInstrumentMeta.positionPercent = ((slmOrder.average_price - previousClose) / previousClose) * 100;
-                        QuickShortStrategy.instrumentToMetaMapping[slmOrder.instrument_token] = newInstrumentMeta;
+                        QuickShortStrategy.instrumentToMetaMapping[instrument_token] = newInstrumentMeta;
                     }
                 } else if (slmOrder.order_type === OrderType.SLM
                     && slmOrder.transaction_type === TransactionType.BUY
                     && slmOrder.status === OrderStatus.TRIGGER_PENDING) {
                     // These are the trailing stop loss orders that are placed
-                    QuickShortStrategy.instrumentToSLMOrderMapping[slmOrder.instrument_token] = slmOrder;
-                    if (QuickShortStrategy.slmOrders.has(slmOrder.instrument_token)) {
-                        QuickShortStrategy.slmOrders.delete(slmOrder.instrument_token);
+                    QuickShortStrategy.instrumentToSLMOrderMapping[instrument_token] = slmOrder;
+                    if (QuickShortStrategy.slmOrders.has(instrument_token)) {
+                        QuickShortStrategy.slmOrders.delete(instrument_token);
                     }
                 }
             }
@@ -275,13 +276,14 @@ export class QuickShortStrategy extends BaseStrategy {
     // x * ((100 + percent) / 100) = openPrice
     // x = (openPrice * 100) / (100 + percent)
     private async _checkAndUpdateInstrumentMetaData(tickerData: TickerData) {
+        const instrument_token = +tickerData.instrument_token;
         // 1. check and update the initial percentage change
-        if (!QuickShortStrategy.instrumentToMetaMapping[tickerData.instrument_token]) {
+        if (!QuickShortStrategy.instrumentToMetaMapping[instrument_token]) {
             const openPrice = tickerData.ohlc.open;
             const percentChange = tickerData.change;
             // const previousClose = (openPrice * 100) / (100 + percentChange);
             const previousClose = tickerData.ohlc.close;
-            QuickShortStrategy.instrumentToMetaMapping[tickerData.instrument_token] = {
+            QuickShortStrategy.instrumentToMetaMapping[instrument_token] = {
                 openPrice: openPrice,
                 percentChange,
                 previousClose
@@ -291,18 +293,23 @@ export class QuickShortStrategy extends BaseStrategy {
 
     private async _updateOrderIfRequired(tickerData: TickerData) {
         try {
-            const shortInstrumentData: ShortInstrumentPayload = SHORTS_MAP[tickerData.instrument_token];
-            const instrumentMeta: ShortInstrumentMeta = QuickShortStrategy.instrumentToMetaMapping[tickerData.instrument_token];
+            const instrument_token = +tickerData.instrument_token;
+            const shortInstrumentData: ShortInstrumentPayload = SHORTS_MAP[instrument_token];
+            const instrumentMeta: ShortInstrumentMeta = QuickShortStrategy.instrumentToMetaMapping[instrument_token];
+            console.log("_updateOrderIfRequired", JSON.stringify(QuickShortStrategy.instrumentToShortOrderMapping[instrument_token]));
+            console.log("_updateOrderIfRequired instrumentToSLMOrderMapping ", JSON.stringify(QuickShortStrategy.instrumentToSLMOrderMapping[instrument_token]));
             // 2. check if there is an existing SLM slmOrder. If NOT place one
-            if (QuickShortStrategy.instrumentToShortOrderMapping[tickerData.instrument_token]
-                && !QuickShortStrategy.instrumentToSLMOrderMapping[tickerData.instrument_token]
-                && !QuickShortStrategy.slmOrders.has(tickerData.instrument_token)) {
+            if (QuickShortStrategy.instrumentToShortOrderMapping[instrument_token]
+                && !QuickShortStrategy.instrumentToSLMOrderMapping[instrument_token]
+                && !QuickShortStrategy.slmOrders.has(instrument_token)) {
 
                 // This is the initial stop loss
+                console.log("placiong SL order");
                 await this._placeInitialStopLossOrder(shortInstrumentData, instrumentMeta);
             } else {
                 // 3. on every tick update compare the percentage change with current percent change
                 // ** IMP IMP
+                console.log("trailing SL order");
                 await this._checkAndUpdateSL(shortInstrumentData, instrumentMeta, tickerData);
             }
         } catch (e) {
