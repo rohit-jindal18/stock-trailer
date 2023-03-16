@@ -165,7 +165,7 @@ export class TradingController implements ITradeDelegate, ITickerListener {
     }
 
     onTickerUpdate = (tickerData: TickerData[]): void => {
-        console.log("onTickerUpdate");
+        // console.log("onTickerUpdate");
         this.strategyManager?.onTickerUpdate(tickerData);
     }
 }

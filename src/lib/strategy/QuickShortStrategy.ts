@@ -61,12 +61,12 @@ export class QuickShortStrategy extends BaseStrategy {
         console.log("initialized");
         // EventEmitter.addQSListener(this.listenToInstruments);
         // Job for instrument setup
-        scheduleJob('00 58 08 * * *', (fireDate: Date) => {
+        scheduleJob('30 44 03 * * *', (fireDate: Date) => {
             console.log("scheduling")
             this.setupInstruments();
         });
 
-        scheduleJob('30 58 08 * * *', (fireDate: Date) => {
+        scheduleJob('00 45 03 * * *', (fireDate: Date) => {
             // console.log("trigetrin")
             this.triggerShortTrade();
         });
@@ -296,8 +296,8 @@ export class QuickShortStrategy extends BaseStrategy {
             const instrument_token = +tickerData.instrument_token;
             const shortInstrumentData: ShortInstrumentPayload = SHORTS_MAP[instrument_token];
             const instrumentMeta: ShortInstrumentMeta = QuickShortStrategy.instrumentToMetaMapping[instrument_token];
-            console.log("_updateOrderIfRequired", JSON.stringify(QuickShortStrategy.instrumentToShortOrderMapping[instrument_token]));
-            console.log("_updateOrderIfRequired instrumentToSLMOrderMapping ", JSON.stringify(QuickShortStrategy.instrumentToSLMOrderMapping[instrument_token]));
+            // console.log("_updateOrderIfRequired", JSON.stringify(QuickShortStrategy.instrumentToShortOrderMapping[instrument_token]));
+            // console.log("_updateOrderIfRequired instrumentToSLMOrderMapping ", JSON.stringify(QuickShortStrategy.instrumentToSLMOrderMapping[instrument_token]));
             // 2. check if there is an existing SLM slmOrder. If NOT place one
             if (QuickShortStrategy.instrumentToShortOrderMapping[instrument_token]
                 && !QuickShortStrategy.instrumentToSLMOrderMapping[instrument_token]
